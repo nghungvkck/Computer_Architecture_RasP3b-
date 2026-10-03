@@ -1,9 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
-DHT11_PIN = 7
-LCD_PINS = {'RS': 23, 'E': 27, 'D4': 18, 'D5': 17, 'D6': 14, 'D7': 3, 'BL': 2}
 RLS = {'RELAY_1': 16, 'RELAY_2': 12, 'LED': 13}
+LCD_PINS = {'RS': 23, 'E': 27, 'D4': 18, 'D5': 17, 'D6': 14, 'D7': 3, 'BL': 2}
 LCD_WIDTH = 16
 LCD_CHR = True
 LCD_CMD = False
@@ -11,13 +10,14 @@ LCD_LINE_1 = 0x80
 LCD_LINE_2 = 0xC0
 E_PULSE = 0.0005
 E_DELAY = 0.0005
+DHT11_PIN = 7
 ROOM_TEMPERATURE = 25
+
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 def read_dht11():
-    GPIO.setmode(GPIO.BCM)
     GPIO.setup(DHT11_PIN, GPIO.OUT)
     GPIO.output(DHT11_PIN, GPIO.LOW)
     time.sleep(0.02)
@@ -116,7 +116,9 @@ def main():
         if humidity is not None and temperature is not None:
             lcd_display_string('temp: {:.1f}*C'.format(temperature), 1)
             lcd_display_string('humid: {:.1f}%'.format(humidity), 2)
+            time.sleep(1)
             control_relay(temperature)
+        else:
             time.sleep(1)
 
 try:

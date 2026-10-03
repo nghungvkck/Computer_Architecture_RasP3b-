@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 LCD_PINS = {'RS': 23, 'E': 27, 'D4': 18, 'D5': 17, 'D6': 14, 'D7': 3, 'BL': 2}
+
 BT_1 = 21
 LCD_WIDTH = 16
 LCD_CHR = True
@@ -34,18 +35,18 @@ def lcd_byte(bits, mode):
     GPIO.output(LCD_PINS['RS'], mode)
     for bit_num in range(4):
         GPIO.output(LCD_PINS[f'D{bit_num + 4}'], bits & (1 << (4 + bit_num)) != 0)
-        time.sleep(E_DELAY)
-        GPIO.output(LCD_PINS['E'], True)
-        time.sleep(E_PULSE)
-        GPIO.output(LCD_PINS['E'], False)
-        time.sleep(E_DELAY)
+    time.sleep(E_DELAY)
+    GPIO.output(LCD_PINS['E'], True)
+    time.sleep(E_PULSE)
+    GPIO.output(LCD_PINS['E'], False)
+    time.sleep(E_DELAY)
     for bit_num in range(4):
-            GPIO.output(LCD_PINS[f'D{bit_num + 4}'], bits & (1 << (4 + bit_num)) != 0)
-            time.sleep(E_DELAY)
-            GPIO.output(LCD_PINS['E'], True)
-            time.sleep(E_PULSE)
-            GPIO.output(LCD_PINS['E'], False)
-            time.sleep(E_DELAY)
+        GPIO.output(LCD_PINS[f'D{bit_num + 4}'], bits & (1 << (4 + bit_num)) != 0)
+    time.sleep(E_DELAY)
+    GPIO.output(LCD_PINS['E'], True)
+    time.sleep(E_PULSE)
+    GPIO.output(LCD_PINS['E'], False)
+    time.sleep(E_DELAY)
 
 def lcd_display_string(message, line):
     lcd_byte(LCD_LINE_1 if line==1 else LCD_LINE_2, LCD_CMD)
@@ -58,9 +59,9 @@ def main():
     button_state = 0
     time.sleep(1)
 
-    while 1:
+    while True:
         if GPIO.input(BT_1) == GPIO.LOW:
-            button_state += 1
+            button_state = button_state + 1 
             time.sleep(0.25)
         if button_state == 1:
             for i in range(LCD_WIDTH - len('Hello-World!')):
@@ -68,7 +69,7 @@ def main():
                 lcd_display_string(" "*i + 'Hello-World!', 1)
                 time.sleep(0.25)
                 if GPIO.input(BT_1) == GPIO.LOW:
-                    button_state += 1
+                    button_state = button_state + 1
                     time.sleep(0.1)
                     lcd_clear()
                     break
@@ -78,7 +79,7 @@ def main():
                 lcd_display_string(' '*i + 'Hello-World!', 1)
                 time.sleep(0.25)
                 if GPIO.input(BT_1) == GPIO.LOW:
-                    button_state += 1
+                    button_state = button_state + 1
                     time.sleep(0.1)
                     lcd_clear()
                     break

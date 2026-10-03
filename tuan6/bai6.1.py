@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
+RLS = {'RELAY_1': 16, 'RELAY_2': 12, 'LED': 13}
 LCD_PINS = {'RS': 23, 'E': 27, 'D4': 18, 'D5': 17, 'D6': 14, 'D7': 3, 'BL': 2}
 LCD_WIDTH = 16
 LCD_CHR = True
@@ -10,6 +11,8 @@ LCD_LINE_2 = 0xC0
 E_PULSE = 0.0005
 E_DELAY = 0.0005
 DHT11_PIN = 7
+ROOM_TEMPERATURE = 25
+
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -90,6 +93,19 @@ def lcd_display_string(message, line):
     for char in message:
         lcd_byte(ord(char), LCD_CHR)
 
+def control_relay(temperature):
+    for pin in RLS.values():
+        GPIO.setup(pin, GPIO.OUT)
+    if temperature > ROOM_TEMPERATURE:
+        GPIO.output(RLS['RELAY_1'], GPIO.HIGH)
+        GPIO.output(RLS['RELAY_2'], GPIO.HIGH)
+    elif temperature == ROOM_TEMPERATURE:
+        GPIO.output(RLS['RELAY_1'], GPIO.HIGH)
+        GPIO.output(RLS['RELAY_2'], GPIO.LOW)
+    else:
+        GPIO.output(RLS['RELAY_1'], GPIO.LOW)
+        GPIO.output(RLS['RELAY_2'], GPIO.LOW)
+
 def main():
     lcd_init()
     GPIO.output(LCD_PINS['BL'], True)
@@ -101,6 +117,7 @@ def main():
             lcd_display_string('temp: {:.1f}*C'.format(temperature), 1)
             lcd_display_string('humid: {:.1f}%'.format(humidity), 2)
             time.sleep(1)
+            control_relay(temperature)
         else:
             time.sleep(1)
 

@@ -10,12 +10,12 @@ GPIO.setwarnings(False)
 led = 13
 Button_1= 21
 
-GPIO.setup(led, GPIO.output)
+GPIO.setup(led, GPIO.OUT)
 GPIO.setup(Button_1, GPIO.IN, pull_up_down= GPIO.PUD_UP)   # kich hoat tro treo noi bo cua ras
 
 def updateLed():
-    # if GPIO.input(Button_1) == GPIO.LOW:
-    if GPIO.input(Button_1):
+    if GPIO.input(Button_1) == GPIO.LOW:
+        print("Button pressed")
         GPIO.output(led, GPIO.HIGH)
     else:
         GPIO.output(led, GPIO.LOW)
